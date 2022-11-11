@@ -45,6 +45,11 @@
 		</dependency>
 
 		<!-- Dependencias agregadas -->
+		<dependency>
+			<groupId>com.magadiflo.commons</groupId>
+			<artifactId>fs-microservicio-commons</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
