@@ -1,5 +1,6 @@
 package com.magadiflo.cursos.app.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.magadiflo.commons.alumnos.models.entity.Alumno;
 import com.magadiflo.commons.controllers.CommonController;
 import com.magadiflo.cursos.app.models.entity.Curso;
 import com.magadiflo.cursos.app.services.ICursoService;
@@ -29,6 +31,32 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 
 		Curso cursoBD = optionalCurso.get();
 		cursoBD.setNombre(curso.getNombre());
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
+	}
+
+	@PutMapping(path = "/{id}/asignar-alumnos")
+	public ResponseEntity<?> asignarAlumnos(@PathVariable Long id, @RequestBody List<Alumno> alumnos) {
+		Optional<Curso> optionalCurso = this.service.findById(id);
+		if (optionalCurso.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		Curso cursoBD = optionalCurso.get();
+		alumnos.forEach(alumno -> cursoBD.addAlumnos(alumno));
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
+	}
+
+	@PutMapping(path = "/{id}/eliminar-alumno")
+	public ResponseEntity<?> eliminarAlumno(@PathVariable Long id, @RequestBody Alumno alumnos) {
+		Optional<Curso> optionalCurso = this.service.findById(id);
+		if (optionalCurso.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		Curso cursoBD = optionalCurso.get();
+		cursoBD.removeAlumnos(alumnos);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
 	}
