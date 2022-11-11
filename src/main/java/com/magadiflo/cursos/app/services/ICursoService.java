@@ -5,4 +5,6 @@ import com.magadiflo.cursos.app.models.entity.Curso;
 
 public interface ICursoService extends ICommonService<Curso> {
 
+	Curso findCursoByAlumnoId(Long id);
+
 }
