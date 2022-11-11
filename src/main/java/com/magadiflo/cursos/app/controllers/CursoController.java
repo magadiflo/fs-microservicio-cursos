@@ -49,14 +49,14 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 	}
 
 	@PutMapping(path = "/{id}/eliminar-alumno")
-	public ResponseEntity<?> eliminarAlumno(@PathVariable Long id, @RequestBody Alumno alumnos) {
+	public ResponseEntity<?> eliminarAlumno(@PathVariable Long id, @RequestBody Alumno alumno) {
 		Optional<Curso> optionalCurso = this.service.findById(id);
 		if (optionalCurso.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 
 		Curso cursoBD = optionalCurso.get();
-		cursoBD.removeAlumnos(alumnos);
+		cursoBD.removeAlumnos(alumno);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
 	}
