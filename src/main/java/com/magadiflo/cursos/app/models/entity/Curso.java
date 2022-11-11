@@ -1,16 +1,22 @@
 package com.magadiflo.cursos.app.models.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.magadiflo.commons.alumnos.models.entity.Alumno;
 
 @Entity
 @Table(name = "cursos")
@@ -25,6 +31,13 @@ public class Curso {
 	@Column(name = "create_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createAt;
+
+	@OneToMany
+	private List<Alumno> alumnos;
+
+	public Curso() {
+		this.alumnos = new ArrayList<>();
+	}
 
 	@PrePersist
 	public void prePersist() {
@@ -53,6 +66,22 @@ public class Curso {
 
 	public void setCreateAt(Date createAt) {
 		this.createAt = createAt;
+	}
+
+	public List<Alumno> getAlumnos() {
+		return alumnos;
+	}
+
+	public void setAlumnos(List<Alumno> alumnos) {
+		this.alumnos = alumnos;
+	}
+
+	public void addAlumnos(Alumno alumno) {
+		this.alumnos.add(alumno);
+	}
+
+	public void removeAlumnos(Alumno alumno) {
+		this.alumnos.remove(alumno);
 	}
 
 	@Override
