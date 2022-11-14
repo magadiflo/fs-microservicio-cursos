@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.magadiflo.commons.alumnos.models.entity.Alumno;
 import com.magadiflo.commons.controllers.CommonController;
+import com.magadiflo.commons.examenes.models.entity.Examen;
 import com.magadiflo.cursos.app.models.entity.Curso;
 import com.magadiflo.cursos.app.services.ICursoService;
 
@@ -65,6 +66,32 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 	@GetMapping(path = "/alumno/{id}")
 	public ResponseEntity<?> buscarPorAlumnoId(@PathVariable Long id) {
 		return ResponseEntity.ok(this.service.findCursoByAlumnoId(id));
+	}
+
+	@PutMapping(path = "/{id}/asignar-examenes")
+	public ResponseEntity<?> asignarExamenes(@PathVariable Long id, @RequestBody List<Examen> examenes) {
+		Optional<Curso> optionalCurso = this.service.findById(id);
+		if (optionalCurso.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		Curso cursoBD = optionalCurso.get();
+		examenes.forEach(cursoBD::addExamen);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
+	}
+
+	@PutMapping(path = "/{id}/eliminar-examen")
+	public ResponseEntity<?> eliminarExamen(@PathVariable Long id, @RequestBody Examen examen) {
+		Optional<Curso> optionalCurso = this.service.findById(id);
+		if (optionalCurso.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		Curso cursoBD = optionalCurso.get();
+		cursoBD.removeExamen(examen);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
 	}
 
 }
