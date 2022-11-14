@@ -12,7 +12,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  */
 
 @EnableEurekaClient
-@EntityScan({ "com.magadiflo.commons.alumnos.models.entity", "com.magadiflo.cursos.app.models.entity" })
+@EntityScan({ "com.magadiflo.commons.alumnos.models.entity", "com.magadiflo.cursos.app.models.entity", "com.magadiflo.commons.examenes.models.entity" })
 @SpringBootApplication
 public class FsMicroservicioCursosApplication {
 
