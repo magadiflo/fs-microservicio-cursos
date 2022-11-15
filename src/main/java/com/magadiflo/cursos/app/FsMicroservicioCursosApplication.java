@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /***
  * @EntityScan({...}), le agregamos el package del entity de la librería commons
@@ -11,6 +12,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  *
  */
 
+@EnableFeignClients
 @EnableEurekaClient
 @EntityScan({ "com.magadiflo.commons.alumnos.models.entity", "com.magadiflo.cursos.app.models.entity", "com.magadiflo.commons.examenes.models.entity" })
 @SpringBootApplication

@@ -7,4 +7,6 @@ public interface ICursoService extends ICommonService<Curso> {
 
 	Curso findCursoByAlumnoId(Long id);
 
+	Iterable<Long> obtenerExamenesIdsConRespuestasAlumno(Long alumnoId);
+
 }
