@@ -15,6 +15,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
 
 import com.magadiflo.commons.alumnos.models.entity.Alumno;
 import com.magadiflo.commons.examenes.models.entity.Examen;
@@ -27,6 +28,7 @@ public class Curso {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotBlank
 	private String nombre;
 
 	@Column(name = "create_at")
