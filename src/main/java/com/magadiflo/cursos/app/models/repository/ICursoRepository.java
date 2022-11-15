@@ -1,14 +1,15 @@
 package com.magadiflo.cursos.app.models.repository;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.magadiflo.cursos.app.models.entity.Curso;
 
-public interface ICursoRepository extends CrudRepository<Curso, Long> {
+public interface ICursoRepository extends PagingAndSortingRepository<Curso, Long> {
 	
 	/**
 	 * JOIN, es para unir las tablas (similar al INNER JOIN de SQL Nativo)
+	 * 
 	 * FETCH, para poblar el curso con la lista de alumnos, es decir, el atributo "alumnos" del 
 	 * Entity Cursos será poblado en una sola consulta, sin hacer consulas por separado
 	 */
