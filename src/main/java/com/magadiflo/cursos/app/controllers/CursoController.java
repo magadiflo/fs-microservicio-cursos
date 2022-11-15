@@ -2,6 +2,7 @@ package com.magadiflo.cursos.app.controllers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -71,7 +72,19 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 
 	@GetMapping(path = "/alumno/{id}")
 	public ResponseEntity<?> buscarPorAlumnoId(@PathVariable Long id) {
-		return ResponseEntity.ok(this.service.findCursoByAlumnoId(id));
+		Curso curso = this.service.findCursoByAlumnoId(id);
+		if (curso != null) {
+			List<Long> examenesIds = (List<Long>) this.service.obtenerExamenesIdsConRespuestasAlumno(id);
+			List<Examen> examenes = curso.getExamenes().stream().map(examen -> {
+				if (examenesIds.contains(examen.getId())) {
+					examen.setRespondido(true);
+				}
+				return examen;
+			}).collect(Collectors.toList());
+			
+			curso.setExamenes(examenes);
+		}
+		return ResponseEntity.ok(curso);
 	}
 
 	@PutMapping(path = "/{id}/asignar-examenes")
