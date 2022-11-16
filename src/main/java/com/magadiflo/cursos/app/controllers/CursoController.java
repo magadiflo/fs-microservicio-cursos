@@ -1,11 +1,14 @@
 package com.magadiflo.cursos.app.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -23,6 +26,9 @@ import com.magadiflo.cursos.app.services.ICursoService;
 
 @RestController
 public class CursoController extends CommonController<Curso, ICursoService> {
+
+	@Value("${config.balanceador.test}")
+	private String balanceadorTest;
 
 	public CursoController(ICursoService service) {
 		super(service);
@@ -81,7 +87,7 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 				}
 				return examen;
 			}).collect(Collectors.toList());
-			
+
 			curso.setExamenes(examenes);
 		}
 		return ResponseEntity.ok(curso);
@@ -111,6 +117,16 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 		cursoBD.removeExamen(examen);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
+	}
+
+	// Método que usaremos solo para probar cómo es que Spring Cloud Load Balancer selecciona de las distintas instancias la más adecuada
+	@GetMapping(path = "/balanceador-test")
+	public ResponseEntity<?> balanceadorTest() {
+		Map<String, Object> response = new HashMap<>();
+		response.put("balanceador", this.balanceadorTest);
+		response.put("cursos", this.service.findAll());
+
+		return ResponseEntity.ok(response);
 	}
 
 }
