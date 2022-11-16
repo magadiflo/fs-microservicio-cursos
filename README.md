@@ -16,3 +16,19 @@ de forma explícita el Spring Cloud LoadBalancer
 	<artifactId>spring-cloud-starter-loadbalancer</artifactId>
 </dependency>
 ```
+
+# ¿Cómo verificamos que se esté dando el balanceo de carga?
+- Podemos ejecutar nuevas instancias asignándole valor a la variable de entorno definida en el application.properties
+- Luego cuando, para ejecutar el proyecto se deberá seguir la siguiente secuencia:
+
+```
+- Click derecho sobre el proyecto / Run AS/ Run configurations...
+- Seleccionar el microservicio al que le vayamos a generar una nueva instancia
+- Seleccionamos la pestaña Environment
+- Click en Add..
+	Name: BALANCEADOR_TEST
+	Value: Segunda instancia (cualquier texto)
+- Click en Apply/ OK / Run
+```
+- Recordar que por defecto Spring Cloud Load Balancer utiliza el algoritmo **Round Robin** para determinar la instancia a usar.
+- Su funcionamiento es sencillo, por cada petición que se realice irá seleccionando secuencialmente las instancias.
