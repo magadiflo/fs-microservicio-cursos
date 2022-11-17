@@ -14,7 +14,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients
 @EnableEurekaClient
-@EntityScan({ "com.magadiflo.commons.alumnos.models.entity", "com.magadiflo.cursos.app.models.entity", "com.magadiflo.commons.examenes.models.entity" })
+@EntityScan({ "com.magadiflo.cursos.app.models.entity", "com.magadiflo.commons.examenes.models.entity" })
 @SpringBootApplication
 public class FsMicroservicioCursosApplication {
 
