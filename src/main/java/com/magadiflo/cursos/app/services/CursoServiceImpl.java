@@ -1,9 +1,13 @@
 package com.magadiflo.cursos.app.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.magadiflo.commons.alumnos.models.entity.Alumno;
 import com.magadiflo.commons.services.CommonServiceImpl;
+import com.magadiflo.cursos.app.clients.IAlumnoFeignClient;
 import com.magadiflo.cursos.app.clients.IRespuestaFeignClient;
 import com.magadiflo.cursos.app.models.entity.Curso;
 import com.magadiflo.cursos.app.models.repository.ICursoRepository;
@@ -12,10 +16,13 @@ import com.magadiflo.cursos.app.models.repository.ICursoRepository;
 public class CursoServiceImpl extends CommonServiceImpl<Curso, ICursoRepository> implements ICursoService {
 
 	private final IRespuestaFeignClient respuestaFeignClient;
+	private final IAlumnoFeignClient alumnoFeignClient;
 
-	public CursoServiceImpl(ICursoRepository repository, IRespuestaFeignClient respuestaFeignClient) {
+	public CursoServiceImpl(ICursoRepository repository, IRespuestaFeignClient respuestaFeignClient,
+			IAlumnoFeignClient alumnoFeignClient) {
 		super(repository);
 		this.respuestaFeignClient = respuestaFeignClient;
+		this.alumnoFeignClient = alumnoFeignClient;
 	}
 
 	@Override
@@ -32,6 +39,11 @@ public class CursoServiceImpl extends CommonServiceImpl<Curso, ICursoRepository>
 	@Override
 	public Iterable<Long> obtenerExamenesIdsConRespuestasAlumno(Long alumnoId) {
 		return this.respuestaFeignClient.obtenerExamenesIdsConRespuestasAlumno(alumnoId);
+	}
+
+	@Override
+	public Iterable<Alumno> obtenerAlumnosPorCurso(List<Long> ids) {
+		return this.alumnoFeignClient.obtenerAlumnosPorCurso(ids);
 	}
 
 }
