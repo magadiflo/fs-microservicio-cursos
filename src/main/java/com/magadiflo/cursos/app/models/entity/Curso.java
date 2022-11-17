@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,8 +17,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.magadiflo.commons.alumnos.models.entity.Alumno;
 import com.magadiflo.commons.examenes.models.entity.Examen;
 
@@ -35,8 +39,24 @@ public class Curso {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createAt;
 
-	@OneToMany
+	/**
+	 * @Transient, si bien es cierto, en esta bd de MySQL no está la tabla alumnos,
+	 * muchos menos un atributo llamado alumnos, es decir, solo será un atributo en
+	 * esta clase que será poblada después. Es decir, después vamos a requerir un
+	 * listado de alumnos en Curso. Después, cuando necesitemos por Curso el listado
+	 * de alumnos, lo tenemos que ir a buscar al microservicio-usuarios, y es ese
+	 * microservicio quien realiza la consulta a Postgresql, de esa manera
+	 * estaríamos estableciendo una relación distribuida. Ir a buscar a los alumnos
+	 * de este curso mediante los Ids y se lo asignamos al curso los objetos
+	 * completos de los alumnos
+	 */
+	// @OneToMany
+	@Transient
 	private List<Alumno> alumnos;
+
+	@JsonIgnoreProperties(value = { "curso" }, allowSetters = true)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<CursoAlumno> cursoAlumnos;
 
 	@ManyToMany
 	private List<Examen> examenes;
@@ -44,6 +64,7 @@ public class Curso {
 	public Curso() {
 		this.alumnos = new ArrayList<>();
 		this.examenes = new ArrayList<>();
+		this.cursoAlumnos = new ArrayList<>();
 	}
 
 	@PrePersist
@@ -110,6 +131,22 @@ public class Curso {
 	public void removeExamen(Examen examen) {
 		// Como estamos eliminando, es importante implementar el equals() en Examen
 		this.examenes.remove(examen);
+	}
+
+	public List<CursoAlumno> getCursoAlumnos() {
+		return cursoAlumnos;
+	}
+
+	public void setCursoAlumnos(List<CursoAlumno> cursoAlumnos) {
+		this.cursoAlumnos = cursoAlumnos;
+	}
+
+	public void addCursoAlumno(CursoAlumno cursoAlumno) {
+		this.cursoAlumnos.add(cursoAlumno);
+	}
+
+	public void removeCrusoAlumno(CursoAlumno cursoAlumno) {
+		this.cursoAlumnos.remove(cursoAlumno);
 	}
 
 	@Override
