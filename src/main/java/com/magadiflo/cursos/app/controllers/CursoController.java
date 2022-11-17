@@ -22,6 +22,7 @@ import com.magadiflo.commons.alumnos.models.entity.Alumno;
 import com.magadiflo.commons.controllers.CommonController;
 import com.magadiflo.commons.examenes.models.entity.Examen;
 import com.magadiflo.cursos.app.models.entity.Curso;
+import com.magadiflo.cursos.app.models.entity.CursoAlumno;
 import com.magadiflo.cursos.app.services.ICursoService;
 
 @RestController
@@ -58,7 +59,13 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 		}
 
 		Curso cursoBD = optionalCurso.get();
-		alumnos.forEach(alumno -> cursoBD.addAlumnos(alumno));
+		alumnos.forEach(alumno -> {
+			CursoAlumno cursoAlumno = new CursoAlumno();
+			cursoAlumno.setAlumnoId(alumno.getId());
+			cursoAlumno.setCurso(cursoBD);
+
+			cursoBD.addCursoAlumno(cursoAlumno);
+		});
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
 	}
@@ -71,7 +78,15 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 		}
 
 		Curso cursoBD = optionalCurso.get();
-		cursoBD.removeAlumnos(alumno);
+
+		CursoAlumno cursoAlumno = new CursoAlumno();
+		// Para cuando se llame al removeCursoAlumno(), se elimine teniendo en cuenta
+		// este atributo
+		cursoAlumno.setAlumnoId(alumno.getId());
+
+		// Por eso es que en el equals() de CursoAlumno, la comparación se hace con el
+		// alumnoId
+		cursoBD.removeCrusoAlumno(cursoAlumno);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
 	}
@@ -119,7 +134,8 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
 	}
 
-	// Método que usaremos solo para probar cómo es que Spring Cloud Load Balancer selecciona de las distintas instancias la más adecuada
+	// Método que usaremos solo para probar cómo es que Spring Cloud Load Balancer
+	// selecciona de las distintas instancias la más adecuada
 	@GetMapping(path = "/balanceador-test")
 	public ResponseEntity<?> balanceadorTest() {
 		Map<String, Object> response = new HashMap<>();
