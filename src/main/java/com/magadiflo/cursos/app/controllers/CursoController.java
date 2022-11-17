@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -41,13 +43,31 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 		List<Curso> cursos = ((List<Curso>) this.service.findAll()).stream().map(c -> {
 			c.getCursoAlumnos().forEach(cursoAlumno -> {
 				Alumno alumno = new Alumno();
-				alumno.setId(cursoAlumno.getAlumnoId());
+				// Solo pasamos el id por que en el listar de cursos no necestiamos todo el detalle de los alumnos,
+				// solo el id, para tener un count, contar la cant. de alumnos en el curso. El detalle completo de 
+				// los alumnos va en la página de detalle del curso (método ver())
+				alumno.setId(cursoAlumno.getAlumnoId()); 
 				c.addAlumnos(alumno);
 			});
 			return c;
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(cursos);
+	}
+
+	@Override
+	@GetMapping(path = "/pagina")
+	public ResponseEntity<?> listar(Pageable pageable) {
+		Page<Curso> cursosPage = this.service.findAll(pageable).map(curso -> {
+			curso.getCursoAlumnos().forEach(cursoAlumno -> {
+				Alumno alumno = new Alumno();
+				alumno.setId(cursoAlumno.getAlumnoId());
+				curso.addAlumnos(alumno);
+			});
+			return curso;
+		});
+
+		return ResponseEntity.ok(cursosPage);
 	}
 
 	@Override
