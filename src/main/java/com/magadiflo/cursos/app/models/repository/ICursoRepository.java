@@ -1,5 +1,6 @@
 package com.magadiflo.cursos.app.models.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -20,5 +21,14 @@ public interface ICursoRepository extends PagingAndSortingRepository<Curso, Long
 	// la tabla de la BD es cursoAlumnos
 	@Query("SELECT c FROM Curso AS c JOIN FETCH c.cursoAlumnos AS ca WHERE ca.alumnoId = ?1")
 	Curso findCursoByAlumnoId(Long id);
+
+	/**
+	 * Cuando modifiquemos los registros de una tabla usando @Query debemos
+	 * usar @Modifying, es decir, cada vez que usemos un DELETE o un UPDATE o un
+	 * INSERT utilizando @Query, tenemos que agregar otra anotación: @Modifying
+	 */
+	@Modifying
+	@Query("DELETE FROM CursoAlumno AS ca WHERE ca.alumnoId = ?1")
+	void eliminarCursoAlumnoPorId(Long alumnoId);
 
 }

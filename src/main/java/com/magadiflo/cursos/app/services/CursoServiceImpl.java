@@ -31,6 +31,12 @@ public class CursoServiceImpl extends CommonServiceImpl<Curso, ICursoRepository>
 		return this.repository.findCursoByAlumnoId(id);
 	}
 
+	@Override
+	@Transactional
+	public void eliminarCursoAlumnoPorId(Long alumnoId) {
+		this.repository.eliminarCursoAlumnoPorId(alumnoId);
+	}
+
 	// Aquí el @Transactional ¡NO VA! ya que no es un repository,
 	// no es una comunicación con la BD de este microservicio, aunque
 	// podría ir, siempre que éste método tenga algún código que haga

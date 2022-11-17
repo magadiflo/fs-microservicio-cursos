@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -43,10 +44,12 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 		List<Curso> cursos = ((List<Curso>) this.service.findAll()).stream().map(c -> {
 			c.getCursoAlumnos().forEach(cursoAlumno -> {
 				Alumno alumno = new Alumno();
-				// Solo pasamos el id por que en el listar de cursos no necestiamos todo el detalle de los alumnos,
-				// solo el id, para tener un count, contar la cant. de alumnos en el curso. El detalle completo de 
+				// Solo pasamos el id por que en el listar de cursos no necestiamos todo el
+				// detalle de los alumnos,
+				// solo el id, para tener un count, contar la cant. de alumnos en el curso. El
+				// detalle completo de
 				// los alumnos va en la página de detalle del curso (método ver())
-				alumno.setId(cursoAlumno.getAlumnoId()); 
+				alumno.setId(cursoAlumno.getAlumnoId());
 				c.addAlumnos(alumno);
 			});
 			return c;
@@ -196,6 +199,12 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 		response.put("cursos", this.service.findAll());
 
 		return ResponseEntity.ok(response);
+	}
+
+	@DeleteMapping(path = "/eliminar-alumno/{id}")
+	public ResponseEntity<?> eliminarCursoAlumnoPorId(@PathVariable Long id) {
+		this.service.eliminarCursoAlumnoPorId(id);
+		return ResponseEntity.noContent().build();
 	}
 
 }
