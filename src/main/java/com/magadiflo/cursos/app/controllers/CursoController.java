@@ -35,6 +35,21 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 		super(service);
 	}
 
+	@Override
+	@GetMapping
+	public ResponseEntity<?> listar() {
+		List<Curso> cursos = ((List<Curso>) this.service.findAll()).stream().map(c -> {
+			c.getCursoAlumnos().forEach(cursoAlumno -> {
+				Alumno alumno = new Alumno();
+				alumno.setId(cursoAlumno.getAlumnoId());
+				c.addAlumnos(alumno);
+			});
+			return c;
+		}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(cursos);
+	}
+
 	@PutMapping(path = "/{id}")
 	public ResponseEntity<?> editar(@Valid @RequestBody Curso curso, BindingResult result, @PathVariable Long id) {
 		if (result.hasErrors()) {
