@@ -123,7 +123,15 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 			cursoBD.addCursoAlumno(cursoAlumno);
 		});
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(cursoBD));
+		Curso cursoAlumnosAsignados = this.service.save(cursoBD);
+		if (!cursoAlumnosAsignados.getCursoAlumnos().isEmpty()) {
+			List<Long> ids = cursoAlumnosAsignados.getCursoAlumnos().stream()
+					.map(cursoAlumno -> cursoAlumno.getAlumnoId()).collect(Collectors.toList());
+			List<Alumno> alumnosDelCurso = (List<Alumno>) this.service.obtenerAlumnosPorCurso(ids);
+			cursoAlumnosAsignados.setAlumnos(alumnosDelCurso);
+		}
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(cursoAlumnosAsignados);
 	}
 
 	@PutMapping(path = "/{id}/eliminar-alumno")
@@ -152,7 +160,8 @@ public class CursoController extends CommonController<Curso, ICursoService> {
 		Curso curso = this.service.findCursoByAlumnoId(id);
 		if (curso != null) {
 			List<Long> examenesIds = (List<Long>) this.service.obtenerExamenesIdsConRespuestasAlumno(id);
-			// TODO: solo por el momento, ya que el método obtenerExamenesIdsConRespuestasAlumno(...) nos devolverá null
+			// TODO: solo por el momento, ya que el método
+			// obtenerExamenesIdsConRespuestasAlumno(...) nos devolverá null
 			if (examenesIds != null && examenesIds.size() > 0) {
 
 				List<Examen> examenes = curso.getExamenes().stream().map(examen -> {
